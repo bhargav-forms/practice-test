@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Data Interpretation Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    #timer {
+      text-align: right;
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #d9534f;
+    }
+
+    .question {
+      margin-bottom: 20px;
+    }
+
+    .question p {
+      font-weight: bold;
+    }
+
+    .options label {
+      display: block;
+      margin: 5px 0;
+    }
+
+    #submitBtn {
+      display: block;
+      margin: 30px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #submitBtn:hover {
+      background-color: #0056b3;
+    }
+
+    #result {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Data Interpretation Test</h1>
+    <div id="timer">Time Left: <span id="time">15:00</span></div>
+
+    <form id="quizForm">
+      <div id="quiz"></div>
+      <button type="submit" id="submitBtn">Submit</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is 20% of 150?",
+        options: ["25", "30", "35", "40"],
+        answer: "30"
+      },
+      {
+        question: "If the average of 4, 8, x, and 10 is 8, what is x?",
+        options: ["6", "8", "10", "12"],
+        answer: "10"
+      },
+      {
+        question: "A shopkeeper sells an item for ₹240 after giving a 20% discount. What was the original price?",
+        options: ["₹280", "₹300", "₹320", "₹360"],
+        answer: "₹300"
+      },
+      {
+        question: "In a pie chart, the angle representing a category is 72°. What percent of the pie does it represent?",
+        options: ["10%", "15%", "20%", "25%"],
+        answer: "20%"
+      },
+      {
+        question: "If a train covers 180 km in 3 hours, what is its average speed?",
+        options: ["60 km/h", "70 km/h", "80 km/h", "90 km/h"],
+        answer: "60 km/h"
+      },
+      {
+        question: "The ratio of boys to girls in a class is 3:2. If there are 30 boys, how many girls are there?",
+        options: ["10", "15", "20", "25"],
+        answer: "20"
+      },
+      {
+        question: "What is the simple interest on ₹1000 at 5% per annum for 2 years?",
+        options: ["₹100", "₹200", "₹150", "₹50"],
+        answer: "₹100"
+      },
+      {
+        question: "If 40% of a number is 80, what is the number?",
+        options: ["100", "150", "200", "250"],
+        answer: "200"
+      },
+      {
+        question: "The population increased from 1200 to 1500. What is the percentage increase?",
+        options: ["20%", "25%", "30%", "35%"],
+        answer: "25%"
+      },
+      {
+        question: "If a worker earns ₹4500 in 15 days, what is his daily wage?",
+        options: ["₹200", "₹250", "₹300", "₹350"],
+        answer: "₹300"
+      },
+      {
+        question: "What is the average of first five even numbers?",
+        options: ["4", "5", "6", "7"],
+        answer: "6"
+      },
+      {
+        question: "If 3 pens cost ₹45, how much do 7 pens cost?",
+        options: ["₹105", "₹100", "₹95", "₹90"],
+        answer: "₹105"
+      },
+      {
+        question: "A pie chart shows 25% for one category. What angle will it be?",
+        options: ["60°", "70°", "80°", "90°"],
+        answer: "90°"
+      },
+      {
+        question: "A bar graph shows sales of ₹200 in Jan, ₹300 in Feb, ₹500 in Mar. What is average monthly sale?",
+        options: ["₹300", "₹350", "₹400", "₹450"],
+        answer: "₹333"
+      },
+      {
+        question: "A man walks 4 km north, 3 km east. How far is he from the start?",
+        options: ["5 km", "6 km", "7 km", "8 km"],
+        answer: "5 km"
+      }
+    ];
+
+    const quizContainer = document.getElementById("quiz");
+    const form = document.getElementById("quizForm");
+    const resultContainer = document.getElementById("result");
+    const timerDisplay = document.getElementById("time");
+
+    let timer = 15 * 60; // 15 minutes in seconds
+
+    function loadQuestions() {
+      questions.forEach((q, index) => {
+        const questionDiv = document.createElement("div");
+        questionDiv.classList.add("question");
+
+        const questionHTML = `
+          <p>${index + 1}. ${q.question}</p>
+          <div class="options">
+            ${q.options.map(option => `
+              <label>
+                <input type="radio" name="q${index}" value="${option}" required />
+                ${option}
+              </label>
+            `).join('')}
+          </div>
+        `;
+
+        questionDiv.innerHTML = questionHTML;
+        quizContainer.appendChild(questionDiv);
+      });
+    }
+
+    function showResult() {
+      let score = 0;
+      questions.forEach((q, index) => {
+        const selected = form[q${index}].value;
+        if (selected === q.answer) score++;
+      });
+
+      resultContainer.textContent = You scored ${score} out of ${questions.length};
+    }
+
+    function startTimer() {
+      const interval = setInterval(() => {
+        if (timer <= 0) {
+          clearInterval(interval);
+          form.requestSubmit();
+          return;
+        }
+
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+        timerDisplay.textContent = ${minutes}:${seconds < 10 ? '0' : ''}${seconds};
+        timer--;
+      }, 1000);
+    }
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      showResult();
+      form.style.display = "none";
+    });
+
+    loadQuestions();
+    startTimer();
+  </script>
+</body>
+</html>
